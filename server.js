@@ -9,18 +9,30 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000; // Render assigns PORT
 
-app.use(cors({ origin: 'https://trust-client.vercel.app' }));
+// ✅ CORS: Allow only your frontend domain (Change this if needed)
+app.use(cors({
+  origin: "https://divyakratnti.vercel.app",
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type,Authorization"
+}));
+
 app.use(express.json());
 
+// ✅ MongoDB Connection
+mongoose.set('strictQuery', false);
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
+  useUnifiedTopology: true
 })
-  .then(() => console.log('MongoDB connected'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err.message);
+    process.exit(1); // Exit the app if the DB connection fails
+  });
 
+// ✅ API Routes
 app.use('/api', apiRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
